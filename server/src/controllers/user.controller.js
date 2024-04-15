@@ -1,6 +1,7 @@
 import { generateToken } from "../utililies/token.util.js";
 import { hashPassword } from "../utililies/user.util.js";
 import { validateEmail } from "../validators/email.validator.js";
+import { Types } from 'mongoose';
 import User from "../models/user.model.js";
 import Token from "../models/token.model.js";
 
@@ -71,6 +72,30 @@ export class UserController {
         try {
             const users = await User.find();
             res.status(200).json(users);
+        } catch (error) {
+            console.log(error);
+            return res
+                .status(500)
+                .json({ response: 'error', message: 'Error del servidor' });
+        }
+    };
+
+    // BUSCAR USUARIO POR ID
+    static getUserById = async (req, res) => {
+        try {
+            const { id } = req.params;
+            if (!Types.ObjectId.isValid(id)) {
+                return res
+                    .status(404)
+                    .json({ response: 'error', message: 'ID no válido' });
+            }
+            const user = await User.findById(id);
+            if (!user) {
+                return res
+                    .status(404)
+                    .json({ response: 'error', message: 'Usuario no encontrado' });
+            }
+            res.status(200).json(user);
         } catch (error) {
             console.log(error);
             return res
