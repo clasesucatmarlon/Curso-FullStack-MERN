@@ -90,6 +90,8 @@ export class UserController {
                     .json({ response: 'error', message: 'ID no válido' });
             }
             const user = await User.findById(id);
+            // const user = await User.findById(id).select("firstName lastName"); // traer sólo estas propiedades
+            // const user = await User.findById(id).select("-password -image"); // traer todo menos password e image
             if (!user) {
                 return res
                     .status(404)
