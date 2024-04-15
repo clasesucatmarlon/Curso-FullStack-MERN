@@ -106,5 +106,45 @@ export class UserController {
         }
     };
 
+    // ACTUALIZAR USUARIO
+    static updateUser = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { firstName, lastName } = req.body;
+
+            if (!Types.ObjectId.isValid(id)) {
+                return res
+                    .status(404)
+                    .json({ response: 'error', message: 'ID no válido' });
+            }
+
+            const user = await User.findById(id);
+            if (!user) {
+                return res
+                    .status(404)
+                    .json({ response: 'error', message: 'Usuario no encontrado' });
+            }
+
+            // REEMPLAZAR PROPIEDAD CON NUEVO VALOR O DEJAR EL VALOR ANTIGUO
+            user.firstName = firstName || user.firstName;
+            user.lastName = lastName || user.lastName;
+
+            //TODO: Validar email al actualizar
+            //TODO: Validar que el email no exista
+            //TODO: Validar password
+
+            // GUARDAR USUARIO EN BD
+            await user.save();
+            res
+                .status(200)
+                .json({ response: 'success', message: 'Usuario actualizado' });
+        } catch (error) {
+            console.log(error);
+            return res
+                .status(500)
+                .json({ response: 'error', message: 'Error del servidor' });
+        }
+    };
+
 
 }
