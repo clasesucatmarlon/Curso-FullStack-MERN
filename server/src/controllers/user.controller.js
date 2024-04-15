@@ -146,5 +146,32 @@ export class UserController {
         }
     };
 
+    // ELIMINAR USUARIO
+    static deleteUser = async (req, res) => {
+        try {
+            const { id } = req.params;
+            if (!Types.ObjectId.isValid(id)) {
+                return res
+                    .status(404)
+                    .json({ response: 'error', message: 'ID no válido' });
+            }
+
+            const user = await User.findById(id);
+            if (!user) {
+                return res
+                    .status(404)
+                    .json({ response: 'error', message: 'Usuario no encontrado' });
+            }
+            await user.deleteOne();
+            res
+                .status(200)
+                .json({ response: 'success', message: 'Usuario eliminado' });
+        } catch (error) {
+            console.log(error);
+            return res
+                .status(500)
+                .json({ response: 'error', message: 'Error del servidor' });
+        }
+    };
 
 }
