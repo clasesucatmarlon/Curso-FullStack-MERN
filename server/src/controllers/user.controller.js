@@ -4,6 +4,7 @@ import { validateEmail } from "../validators/email.validator.js";
 import { Types } from 'mongoose';
 import User from "../models/user.model.js";
 import Token from "../models/token.model.js";
+import { UserEmail } from "../emails/user.email.js";
 
 export class UserController {
 
@@ -52,7 +53,13 @@ export class UserController {
             // GUARDAR USUARIO y TOKEN EN BD
             await Promise.allSettled([user.save(), token.save()]);
 
-            // TODO: REGISTRARSE Y MANDAR EMAIL PARA CONFIRMAR REGISTRO 
+            // ENVIO DE EMAIL 
+            UserEmail.confirmAccount({
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                token: token.token
+            })
 
             // RESPUESTA LUEGO DE GUARDAD EN BD DE MANERA CORRECTA
             res.status(202).json({
@@ -166,6 +173,42 @@ export class UserController {
             res
                 .status(200)
                 .json({ response: 'success', message: 'Usuario eliminado' });
+        } catch (error) {
+            console.log(error);
+            return res
+                .status(500)
+                .json({ response: 'error', message: 'Error del servidor' });
+        }
+    };
+
+    // CONFIRMAR CUENTA
+    static confirmAccount = async (req, res) => {
+        try {
+            const { token } = req.body;
+
+            if (!token) {
+                return res
+                    .status(409)
+                    .json({ response: 'error', message: 'El token es obligatorio' });
+            }
+
+            const tokenExists = await Token.findOne({ token });
+            if (!tokenExists) {
+                return res
+                    .status(409)
+                    .json({ response: 'error', message: 'Token no válido' });
+            }
+
+            // BUSCAR USUARIO Y CONFIRMAR SU REGISTRO
+            const user = await User.findById(tokenExists.user);
+            user.isConfirmed = true;
+
+            // GUARDAR CAMBIOS DE USUARIO Y ELIMINAR TOKEN
+            await Promise.allSettled([user.save(), tokenExists.deleteOne()]);
+
+            res
+                .status(200)
+                .json({ response: 'success', message: 'Cuanta confirmada' });
         } catch (error) {
             console.log(error);
             return res
