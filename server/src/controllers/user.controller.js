@@ -280,8 +280,8 @@ export class UserController {
             // AQUI
             // const newUser = Object.assign({}, user);
             // delete newUser._doc.password
-            
-            const newUser = {...user};
+
+            const newUser = { ...user };
             delete newUser._doc.password
             console.log(newUser)
             // AQUI
@@ -294,13 +294,19 @@ export class UserController {
             res
                 .status(200)
                 .json({ response: 'success', user: newUser._doc, token });
-                // .json({ response: 'success', user: userAutenticated, token });
+            // .json({ response: 'success', user: userAutenticated, token });
         } catch (error) {
             console.log(error);
             return res
                 .status(500)
                 .json({ response: 'error', message: 'Error del servidor' });
         }
+    };
+
+    // OBTENER LA DATA DEL USUARIO AUTENTICADO
+    static getUserAuthenticated = async (req, res) => {
+        const { user } = req;
+        res.status(200).json(user);
     };
 
 }
