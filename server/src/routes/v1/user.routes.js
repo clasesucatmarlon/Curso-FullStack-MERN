@@ -9,4 +9,5 @@ userRoutes.get("/:id", UserController.getUserById);
 userRoutes.put("/:id", UserController.updateUser);
 userRoutes.delete("/:id", UserController.deleteUser);
 userRoutes.post("/confirm-account", UserController.confirmAccount);
+userRoutes.post("/login", UserController.login);
 
