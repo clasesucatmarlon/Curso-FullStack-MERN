@@ -208,7 +208,7 @@ export class UserController {
 
             res
                 .status(200)
-                .json({ response: 'success', message: 'Cuanta confirmada' });
+                .json({ response: 'success', message: 'La cuenta ha sido confirmada' });
         } catch (error) {
             console.log(error);
             return res
