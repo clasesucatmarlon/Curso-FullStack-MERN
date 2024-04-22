@@ -64,7 +64,7 @@ export class UserController {
             // RESPUESTA LUEGO DE GUARDAD EN BD DE MANERA CORRECTA
             res.status(202).json({
                 response: 'success',
-                message: 'Usuario creado',
+                message: 'Usuario creado: verifica el email para confirmar la cuenta',
             });
         } catch (error) {
             console.log(`Error: ${error}`);
