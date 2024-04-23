@@ -262,6 +262,7 @@ export class UserController {
 
                 return res.status(401).json({
                     response: 'error',
+                    code: 401,
                     message:
                         'Tu cuenta no ha sido confirmada, hemos enviado un nuevo token a tú email',
                 });
