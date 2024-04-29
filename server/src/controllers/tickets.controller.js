@@ -1,5 +1,6 @@
 import Ticket from "../models/tickets.model.js";
 import User from "../models/user.model.js";
+import { TicketEmail } from "../emails/ticket.email.js";
 
 export class TicketController {
 
@@ -40,6 +41,18 @@ export class TicketController {
             const usersSupport = await User.find({ permissions: { $in: "support" } });
 
             // TODO: ENVIAR EMAIL A LOS USUARIOS DE SUPPORT
+            // ENVIAR EMAIL A LOS USUSRIOS DE SUPPORT
+            if (usersSupport) {
+                usersSupport.map(async (support) => {
+                    await TicketEmail.createTicket({
+                        ticketId: savedTicket._id,
+                        firstName: ticketWithCreatedBy.createdBy.firstName,
+                        lastName: ticketWithCreatedBy.createdBy.lastName,
+                        email: support.email,
+                        description: savedTicket.description,
+                    });
+                });
+            }
 
             res
                 .status(202)
